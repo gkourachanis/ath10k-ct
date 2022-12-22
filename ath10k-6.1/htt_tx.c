@@ -1467,6 +1467,7 @@ static int ath10k_htt_tx_32(struct ath10k_htt *htt,
 	struct htt_msdu_ext_desc *ext_desc_t = NULL;
 	u32 peer_id = HTT_INVALID_PEERID;
 	struct ath10k_vif *arvif = (void *)vif->drv_priv;
+	struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)msdu->data;
 
 	if (ar->state != ATH10K_STATE_ON) {
 		static bool done_once = 0;
@@ -1627,8 +1628,6 @@ skip_fixed_rate:
 	}
 
 	if (!is_eth) {
-		struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)msdu->data;
-
 		if ((ieee80211_is_action(hdr->frame_control) ||
 		     ieee80211_is_deauth(hdr->frame_control) ||
 		     ieee80211_is_disassoc(hdr->frame_control)) &&
