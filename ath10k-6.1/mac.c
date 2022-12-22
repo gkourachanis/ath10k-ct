@@ -3274,7 +3274,7 @@ static bool ath10k_mac_sta_has_ofdm_only(struct ieee80211_vif *vif,
 {
 	struct ath10k_vif *arvif = (void *)vif->drv_priv;
 	u32 msk = arvif->bitrate_mask.control[NL80211_BAND_2GHZ].legacy &
-		sta->supp_rates[NL80211_BAND_2GHZ];
+		sta->deflink.supp_rates[NL80211_BAND_2GHZ];
 	/* We have 12 bits of legacy rates, first 4 are /b (CCK) rates. */
 	return (msk & 0xff0) && !(msk & 0xf);
 }
@@ -3284,7 +3284,7 @@ static bool ath10k_mac_sta_has_ofdm_and_cck(struct ieee80211_vif *vif,
 {
 	struct ath10k_vif *arvif = (void *)vif->drv_priv;
 	u32 msk = arvif->bitrate_mask.control[NL80211_BAND_2GHZ].legacy &
-		sta->supp_rates[NL80211_BAND_2GHZ];
+		sta->deflink.supp_rates[NL80211_BAND_2GHZ];
 	/* We have 12 bits of legacy rates, first 4 are /b (CCK) rates. */
 	return ((msk & 0xf) && (msk & 0xff0));
 }
@@ -3383,8 +3383,8 @@ static void ath10k_peer_assoc_h_phymode(struct ath10k *ar,
 	}
 
 	ath10k_dbg(ar, ATH10K_DBG_MAC, "mac peer %pM phymode %s  legacy-supp-rates: 0x%x  arvif-legacy-rates: 0x%x vht-supp: %d\n",
-		   sta->addr, ath10k_wmi_phymode_str(phymode), sta->supp_rates[band],
-		   arvif->bitrate_mask.control[band].legacy, sta->vht_cap.vht_supported);
+		   sta->addr, ath10k_wmi_phymode_str(phymode), sta->deflink.supp_rates[band],
+		   arvif->bitrate_mask.control[band].legacy, sta->deflink.vht_cap.vht_supported);
 
 	arg->peer_phymode = phymode;
 	WARN_ON(phymode == MODE_UNKNOWN);
@@ -3723,7 +3723,7 @@ static void ath10k_bss_assoc(struct ieee80211_hw *hw,
 
 	ath10k_dbg(ar, ATH10K_DBG_MAC,
 		   "mac vdev %d up (associated) bssid %pM aid %d bandwidth %d\n",
-		   arvif->vdev_id, bss_conf->bssid, bss_conf->aid, ap_sta->bandwidth);
+		   arvif->vdev_id, bss_conf->bssid, bss_conf->aid, ap_sta->deflink.bandwidth);
 
 	WARN_ON(arvif->is_up);
 
@@ -7760,7 +7760,7 @@ static void ath10k_sta_rc_update_wk(struct work_struct *wk)
 
 	if (changed & IEEE80211_RC_SUPP_RATES_CHANGED) {
 		ath10k_dbg(ar, ATH10K_DBG_STA, "mac update sta %pM supp rates, bandwidth: %d\n",
-			   sta->addr, sta->bandwidth);
+			   sta->addr, sta->deflink.bandwidth);
 
 		err = ath10k_station_assoc(ar, arvif->vif, sta, true);
 		if (err)
@@ -8628,7 +8628,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
 		 * New association.
 		 */
 		ath10k_dbg(ar, ATH10K_DBG_STA, "mac sta %pM associated, bandwidth: %d\n",
-			   sta->addr, sta->bandwidth);
+			   sta->addr, sta->deflink.bandwidth);
 
 		ret = ath10k_station_assoc(ar, vif, sta, false);
 		if (ret)
@@ -8641,7 +8641,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
 		 * Tdls station authorized.
 		 */
 		ath10k_dbg(ar, ATH10K_DBG_STA, "mac tdls sta %pM authorized, bandwidth: %d\n",
-			   sta->addr, sta->bandwidth);
+			   sta->addr, sta->deflink.bandwidth);
 
 		ret = ath10k_station_assoc(ar, vif, sta, false);
 		if (ret) {
