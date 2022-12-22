@@ -3723,7 +3723,7 @@ static void ath10k_bss_assoc(struct ieee80211_hw *hw,
 
 	ath10k_dbg(ar, ATH10K_DBG_MAC,
 		   "mac vdev %d up (associated) bssid %pM aid %d bandwidth %d\n",
-		   arvif->vdev_id, bss_conf->bssid, bss_conf->aid, ap_sta->deflink.bandwidth);
+		   arvif->vdev_id, bss_conf->bssid, vif->cfg.aid, ap_sta->deflink.bandwidth);
 
 	WARN_ON(arvif->is_up);
 
