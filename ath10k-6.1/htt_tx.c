@@ -1624,6 +1624,7 @@ skip_fixed_rate:
 			    ieee80211_is_action(hdr->frame_control), ieee80211_is_deauth(hdr->frame_control),
 			    ieee80211_is_disassoc(hdr->frame_control), ieee80211_has_protected(hdr->frame_control),
 			    skb_cb->flags & ATH10K_SKB_F_NO_HWCRYPT, txmode, ieee80211_is_data_qos(hdr->frame_control));
+	}
 
 	if (!is_eth) {
 		struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)msdu->data;
